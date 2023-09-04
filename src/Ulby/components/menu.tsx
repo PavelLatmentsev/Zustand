@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
+
 interface User {
   id: number;
   username: string;
@@ -20,9 +21,14 @@ export const useUserStore = create<UserState>()(persist(devtools(immer((set) => 
   isLoading: false,
   errors: [],
   fetchUsers: async () => {
-    const result = await fetch("https://jsonplaceholder.typicode.com/users");
-    const json = await result.json() as User[];
-    set({users:json})
+    try {
+      const result = await fetch("https://jsonplaceholder.typicode.com/users");
+      const json = await result.json() as User[];
+      set({users:json})
+    } catch (error) {
+      console.log(error)
+    }
+
 },
   addUser: (username: string) => set((state) => {
     //   users: [...state.users, { id: Date.now(), username }], --соблюдаем иммутабельность
@@ -34,7 +40,7 @@ export const useUserStore = create<UserState>()(persist(devtools(immer((set) => 
 
 
 const Menu = () => {
-  return <><h2>Menu</h2></>;
+  return <h2>Menu</h2>
 };
 
 export default Menu;
